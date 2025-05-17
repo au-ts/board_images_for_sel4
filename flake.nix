@@ -24,20 +24,22 @@
           hash = "sha256-UPy7XM1NGjbEt+pQr4oQrzD7wWWEtYDOPWTD+CNYMHs=";
         };
 
+        opensbi-riscv64-pine64-star64 = pkgs.pkgsCross.riscv64.callPackage ./opensbi.nix {
+          extraMakeFlags = [
+            "FW_TEXT_START=0x40000000"
+          ];
+        };
       in
       {
-        packages.opensbi-riscv64-pine64-star64 = pkgs.pkgsCross.riscv64.opensbi rec {
-          preConfigure = ''
-            export FW_TEXT_START=0x40000000
-          ''
-        };
         packages.uboot-riscv64-pine64-star64 = pkgs.pkgsCross.riscv64.buildUBoot rec {
+            inherit opensbi-riscv64-pine64-star64;
+
             extraMeta.platforms = [ "riscv64-linux" ];
             version = ubootVersion;
             defconfig = "starfive_visionfive2_defconfig";
 
             extraMakeFlags = [
-              "OPENSBI=${packages.opensbi-riscv64-pine64-star64}/share/opensbi/lp64/generic/firmware/fw_dynamic.bin"
+              "OPENSBI=${opensbi-riscv64-pine64-star64}/share/opensbi/lp64/generic/firmware/fw_dynamic.bin"
             ];
 
             filesToInstall = [
