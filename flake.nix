@@ -25,18 +25,17 @@
         };
       in
       {
-        packages.opensbi-riscv64-pine64-star64 = pkgs.pkgsCross.riscv64.opensbi;
         packages.uboot-riscv64-pine64-star64 = pkgs.pkgsCross.riscv64.buildUBoot rec {
             extraMeta.platforms = [ "riscv64-linux" ];
             version = ubootVersion;
             defconfig = "starfive_visionfive2_defconfig";
-            preInstall = ''
-              WHY IS THIS LINE NOT RUNNING
-              export OPENSBI=${pkgs.pkgsCross.riscv64.opensbi.outPath}/share/opensbi/lp64/generic/firmware/fw_dynamic.bin
-            '';
+
+            extraMakeFlags = [ 
+              "OPENSBI=${pkgs.pkgsCross.riscv64.opensbi.outPath}/share/opensbi/lp64/generic/firmware/fw_dynamic.bin"
+            ];
 
             filesToInstall = [
-              "u-boot-spl.bin.normal.out"
+              "spl/u-boot-spl.bin.normal.out"
               "u-boot.itb"
             ];
             src = mainlineUboot;
