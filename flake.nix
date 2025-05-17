@@ -16,12 +16,12 @@
           inherit system;
         };
 
-        ubootVersion = "v2024.07";
+        ubootVersion = "v2024.10";
         mainlineUboot = pkgs.fetchFromGitHub {
           owner = "u-boot";
           repo = "u-boot";
           rev = ubootVersion;
-          hash = "sha256-mJ2TBy0Y5ZtcGFgtU5RKr0UDUp5FWzojbFb+o/ebRJU=";
+          hash = "sha256-UPy7XM1NGjbEt+pQr4oQrzD7wWWEtYDOPWTD+CNYMHs=";
         };
       in
       {
