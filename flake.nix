@@ -1,0 +1,55 @@
+{
+  description = "A flake for building flashable images for seL4 development";
+
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+    utils.url = "github:numtide/flake-utils";
+  };
+
+  outputs = { self, nixpkgs, ... }@inputs: inputs.utils.lib.eachSystem [
+    "x86_64-linux"
+    "aarch64-linux"
+  ]
+    (system:
+      let
+        pkgs = import nixpkgs {
+          inherit system;
+        };
+
+        ubootVersion = "v2024.07";
+        mainlineUboot = pkgs.fetchFromGitHub {
+          owner = "u-boot";
+          repo = "u-boot";
+          rev = ubootVersion;
+          hash = "sha256-mJ2TBy0Y5ZtcGFgtU5RKr0UDUp5FWzojbFb+o/ebRJU=";
+        };
+      in
+      {
+        packages.opensbi-riscv64-pine64-star64 = pkgs.pkgsCross.riscv64.opensbi;
+        packages.uboot-riscv64-pine64-star64 = pkgs.pkgsCross.riscv64.buildUBoot rec {
+            extraMeta.platforms = [ "riscv64-linux" ];
+            version = ubootVersion;
+            defconfig = "starfive_visionfive2_defconfig";
+            preInstall = ''
+              WHY IS THIS LINE NOT RUNNING
+              export OPENSBI=${pkgs.pkgsCross.riscv64.opensbi.outPath}/share/opensbi/lp64/generic/firmware/fw_dynamic.bin
+            '';
+
+            filesToInstall = [
+              "u-boot-spl.bin.normal.out"
+              "u-boot.itb"
+            ];
+            src = mainlineUboot;
+        };
+
+        packages.uboot-aarch64-odroidc4 = pkgs.pkgsCross.aarch64-multiplatform.buildUBoot rec {
+            extraMeta.platforms = [ "aarch64-linux" ];
+            version = ubootVersion;
+            defconfig = "odroid-c4_defconfig";
+            filesToInstall = [
+              "u-boot.bin"
+            ];
+            src = mainlineUboot;
+          };
+      });
+}
