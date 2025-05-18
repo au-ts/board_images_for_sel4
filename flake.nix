@@ -29,8 +29,17 @@
             "FW_TEXT_START=0x40000000"
           ];
         };
+
+        disk = writeShellApplication {
+          name = "make-disk";
+          runtimeInputs = [ coreutils ];
+          text = ''
+            dd if=/dev/null of=$out/disk.img bs=1M count=16
+          '';
+        }
       in
       {
+        packages.disk = disk;
         packages.uboot-riscv64-pine64-star64 = pkgs.pkgsCross.riscv64.buildUBoot rec {
             inherit opensbi-riscv64-pine64-star64;
 
