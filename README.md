@@ -4,7 +4,7 @@ TODO
     * [x] U-Boot
     * [ ] SD card image
 * [ ] Avnet MaaXBoard
-    * [ ] U-Boot
+    * [x] U-Boot
     * [ ] SD card image
 * [ ] Raspberry Pi 4
     * [x] U-Boot

@@ -58,6 +58,26 @@
           ''
         ;
 
+        ubootAarch64Maaxboard = pkgs.pkgsCross.aarch64-multiplatform.buildUBoot rec {
+          extraMeta.platforms = [ "aarch64-linux" ];
+          # There are multiple branches that could work on the Avnet fork of U-Boot. This one
+          # was chosen as it is known to work.
+          version = "maaxboard_v2021.04_5.10.35_2.0.0";
+          defconfig = "maaxboard_defconfig";
+          filesToInstall = [
+            "u-boot.bin"
+          ];
+          # Nix buildUBoot tries to apply Rasbperry Pi specific patches to the source
+          # which doesn't work for forks.
+          dontPatch = true;
+          src = pkgs.fetchFromGitHub {
+            owner = "Avnet";
+            repo = "uboot-imx";
+            rev = version;
+            hash = "sha256-IuMaAmS2jyckLq4+vTwZaf1H0foh7DwicV5vrDKDC9M=";
+          };
+        };
+
         ubootAarch64Rockpro64 = pkgs.pkgsCross.aarch64-multiplatform.buildUBoot rec {
           extraMeta.platforms = [ "aarch64-linux" ];
           version = ubootVersion;
@@ -123,6 +143,8 @@
             ];
             src = mainlineUboot;
         };
+
+        packages.uboot-aarch64-maaxboard = ubootAarch64Maaxboard;
 
         packages.uboot-aarch64-odroidc4 = ubootAarch64Odroidc4;
         packages.image-aarch64-odroidc4-microsd = imageAarch64Odroidc4;
