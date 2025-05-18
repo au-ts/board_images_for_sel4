@@ -30,13 +30,12 @@
           ];
         };
 
-        disk = writeShellApplication {
-          name = "make-disk";
-          runtimeInputs = [ coreutils ];
-          text = ''
+        disk = pkgs.runCommand "disk" {}
+          ''
+            mkdir -p $out
             dd if=/dev/null of=$out/disk.img bs=1M count=16
-          '';
-        }
+          ''
+        ;
       in
       {
         packages.disk = disk;
