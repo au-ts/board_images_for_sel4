@@ -65,6 +65,8 @@
           BL31= "${pkgs.pkgsCross.aarch64-multiplatform.armTrustedFirmwareRK3399}/bl31.elf";
           filesToInstall = [
             "u-boot.bin"
+            "u-boot.itb"
+            "idbloader.img"
           ];
           src = mainlineUboot;
         };
@@ -123,7 +125,7 @@
         };
 
         packages.uboot-aarch64-odroidc4 = ubootAarch64Odroidc4;
-        packages.image-aarch64-odroidc4 = imageAarch64Odroidc4;
+        packages.image-aarch64-odroidc4-microsd = imageAarch64Odroidc4;
 
         packages.uboot-aarch64-rpi4 = ubootAarch64Rpi4;
         packages.image-aarch64-rpi4 = imageAarch64Rpi4;
