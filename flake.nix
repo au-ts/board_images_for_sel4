@@ -14,6 +14,9 @@
       let
         pkgs = import nixpkgs {
           inherit system;
+          # For ARM trusted firmware for RK3399 and potentially other future
+          # platforms.
+          config.allowUnfree = true;
         };
 
         ubootVersion = "v2024.10";
