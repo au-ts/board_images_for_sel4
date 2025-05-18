@@ -27,6 +27,8 @@
           hash = "sha256-UPy7XM1NGjbEt+pQr4oQrzD7wWWEtYDOPWTD+CNYMHs=";
         };
 
+        # TODO: had to create opensbi.nix due to needing extraMakeFlags instead of using
+        # the nixpkgs opensbi.nix, is there a way to use usptream instead?
         opensbi-riscv64-pine64-star64 = pkgs.pkgsCross.riscv64.callPackage ./opensbi.nix {
           extraMakeFlags = [
             "FW_TEXT_START=0x40000000"
@@ -220,11 +222,8 @@
           ''
           ;
         };
-      in
-      {
-        packages.uboot-riscv64-pine64-star64 = pkgs.pkgsCross.riscv64.buildUBoot rec {
-            inherit opensbi-riscv64-pine64-star64;
 
+        uBootRiscv64Star64 = pkgs.pkgsCross.riscv64.buildUBoot rec {
             extraMeta.platforms = [ "riscv64-linux" ];
             version = ubootVersion;
             defconfig = "starfive_visionfive2_defconfig";
@@ -239,6 +238,30 @@
             ];
             src = mainlineUboot;
         };
+
+        star64Image = pkgs.runCommand "star64-riscv64-image" {
+          nativeBuildInputs = with pkgs; [ gptfdisk dosfstools ];
+        }
+          ''
+            mkdir $out
+            dd if=/dev/zero of=sd.img bs=128M count=1
+            {
+              echo n
+              echo
+              echo
+              echo
+              echo
+
+              echo w
+              echo y
+            } | gdisk sd.img
+            cp sd.img $out
+          ''
+        ;
+      in
+      {
+        packages.star64-riscv64-uboot = uBootRiscv64Star64;
+        packages.star64-riscv64-image = star64Image;
 
         packages.avnet-imx-firmware = avnetImxFirmware;
         packages.avnet-imx-atf = avnetImxAtf;
