@@ -204,13 +204,22 @@
           src = mainlineUboot;
         };
 
-        imageAarch64Odroidc4 = pkgs.runCommand "image-aarch64-odroidc4" {}
+        imageAarch64Odroidc4 = pkgs.stdenv.mkDerivation rec {
+          name = "image-aarch64-odroidc4";
+          src = pkgs.fetchFromGitHub {
+            owner = "LibreELEC";
+            repo = "amlogic-boot-fip";
+            # No particular reason for this commit other than it is a known working version.
+            rev = "0312a79cc65bf7bb3d66d33ad0660b66146bd36d";
+            hash = "sha256-6EIXP1g9LPYNz5jYYrY7PKeVbwSI3DeJBo5ZK17ePMg=";
+          };
+
+          buildPhase = ''
+            mkdir -p $out
+            bash ${./build-fip.sh} odroid-c4 ${ubootAarch64Odroidc4.outPath}/u-boot.bin $out
           ''
-            mkdir -p $out/amlogic-boot-fip
-            cd ${./amlogic-boot-fip}
-            ./build-fip.sh odroid-c4 ${ubootAarch64Odroidc4.outPath}/u-boot.bin $out/amlogic-boot-fip
-          ''
-        ;
+          ;
+        };
       in
       {
         packages.uboot-riscv64-pine64-star64 = pkgs.pkgsCross.riscv64.buildUBoot rec {
