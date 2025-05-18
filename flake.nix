@@ -58,6 +58,89 @@
           ''
         ;
 
+        avnetImxMkimage = pkgs.stdenv.mkDerivation rec {
+          name = "avnet-imx-mkimage";
+          src = pkgs.fetchFromGitHub {
+            owner = "Avnet";
+            repo = "imx-mkimage";
+            rev = "develop_imx_4.14.78_1.0.0_ga";
+            hash = "sha256-GTfbwkFXGbNoy/QbGyZS2VkL9OMBIvRxck3bFbopu50=";
+          };
+
+          nativeBuildInputs = with pkgs; [ musl zlib.static ];
+
+          makeFlags = [
+            "CC=musl-gcc"
+            "SOC=iMX8MQ"
+            "flash_ddr4_val"
+          ];
+
+          patches = [ ./imx-mkimage-patch ];
+
+          preBuild = ''
+            cp ${ubootAarch64Maaxboard}/u-boot-spl.bin iMX8M
+            cp ${ubootAarch64Maaxboard}/maaxboard.dtb iMX8M/fsl-imx8mq-ddr4-arm2.dtb
+            cp ${ubootAarch64Maaxboard}/mkimage iMX8M/mkimage_uboot
+
+            cp ${avnetImxAtf}/bl31.bin iMX8M/
+
+            cp ${avnetImxFirmware}/ddr4_dmem_1d_202006.bin iMX8M/ddr4_dmem_1d.bin
+            cp ${avnetImxFirmware}/ddr4_dmem_2d_202006.bin iMX8M/ddr4_dmem_2d.bin
+            cp ${avnetImxFirmware}/ddr4_imem_1d_202006.bin iMX8M/ddr4_imem_1d.bin
+            cp ${avnetImxFirmware}/ddr4_imem_2d_202006.bin iMX8M/ddr4_imem_2d.bin
+            cp ${avnetImxFirmware}/signed_hdmi_imx8m.bin iMX8M/
+          '';
+        };
+
+        avnetImxAtf = pkgs.pkgsCross.aarch64-multiplatform.stdenv.mkDerivation rec {
+          name = "avnet-imx-atf";
+          src = pkgs.fetchFromGitHub {
+            owner = "Avnet";
+            repo = "imx-atf";
+            rev = "maaxboard-imx_5.4.24_2.1.0";
+            hash = "sha256-pDueidAeGysIj0R12NdqKBuZN/f7sCqjH1Kz8BWoYa4=";
+          };
+
+          makeFlags = [
+            "CROSS_COMPILE=${pkgs.pkgsCross.aarch64-multiplatform.stdenv.cc.targetPrefix}"
+            "PLAT=imx8mq"
+          ];
+
+          hardeningDisable = ["all"];
+
+          prePatch = ''
+            echo "TF_LDFLAGS += --no-warn-rwx-segments" >> Makefile
+            echo "TF_CFLAGS_aarch64 += --param=min-pagesize=0" >> Makefile
+          '';
+
+          installPhase = ''
+            mkdir -p $out
+            cp build/imx8mq/release/bl31.bin $out
+          '';
+        };
+
+        avnetImxFirmware = pkgs.pkgsCross.aarch64-multiplatform.stdenv.mkDerivation rec {
+          name = "avnet-imx-firmware";
+          src = pkgs.fetchurl {
+            url = "https://sources.buildroot.net/firmware-imx/firmware-imx-8.22.bin";
+            hash = "sha256-lMi86sVuxQPCMuYU931rvY4Xx9qnHU5lHqj9UDTDA1A=";
+          };
+          dontUnpack = true;
+
+          buildPhase = ''
+            bash ${src} --auto-accept
+          '';
+
+          installPhase = ''
+            mkdir -p $out
+            cp firmware-imx-8.22/firmware/ddr/synopsys/ddr4_dmem_1d_202006.bin $out
+            cp firmware-imx-8.22/firmware/ddr/synopsys/ddr4_dmem_2d_202006.bin $out
+            cp firmware-imx-8.22/firmware/ddr/synopsys/ddr4_imem_1d_202006.bin $out
+            cp firmware-imx-8.22/firmware/ddr/synopsys/ddr4_imem_2d_202006.bin $out
+            cp firmware-imx-8.22/firmware/hdmi/cadence/signed_hdmi_imx8m.bin $out
+          '';
+        };
+
         ubootAarch64Maaxboard = pkgs.pkgsCross.aarch64-multiplatform.buildUBoot rec {
           extraMeta.platforms = [ "aarch64-linux" ];
           # There are multiple branches that could work on the Avnet fork of U-Boot. This one
@@ -66,6 +149,10 @@
           defconfig = "maaxboard_defconfig";
           filesToInstall = [
             "u-boot.bin"
+            "arch/arm/dts/maaxboard.dtb"
+            "spl/u-boot-spl.bin"
+            "tools/mkimage"
+            "u-boot-nodtb.bin"
           ];
           # Nix buildUBoot tries to apply Rasbperry Pi specific patches to the source
           # which doesn't work for forks.
@@ -144,14 +231,17 @@
             src = mainlineUboot;
         };
 
+        packages.avnet-imx-firmware = avnetImxFirmware;
+        packages.avnet-imx-atf = avnetImxAtf;
+        packages.avnet-imx-mkimage = avnetImxMkimage;
         packages.uboot-aarch64-maaxboard = ubootAarch64Maaxboard;
 
-        packages.uboot-aarch64-odroidc4 = ubootAarch64Odroidc4;
-        packages.image-aarch64-odroidc4-microsd = imageAarch64Odroidc4;
+        packages.odroidc4-uboot-aarch64 = ubootAarch64Odroidc4;
+        packages.odroidc4-image-microsd-aarch64 = imageAarch64Odroidc4;
 
-        packages.uboot-aarch64-rpi4 = ubootAarch64Rpi4;
-        packages.image-aarch64-rpi4 = imageAarch64Rpi4;
+        packages.rpi4-uboot-aarch64 = ubootAarch64Rpi4;
+        packages.rpi4-image-aarch64 = imageAarch64Rpi4;
 
-        packages.uboot-aarch64-rockpro64 = ubootAarch64Rockpro64;
+        packages.rockpro64-uboot-aarch64 = ubootAarch64Rockpro64;
       });
 }

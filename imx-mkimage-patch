@@ -1,0 +1,12 @@
+diff --git a/iMX8M/mkimage_imx8.c b/iMX8M/mkimage_imx8.c
+index 3418655..9bd0132 100644
+--- a/iMX8M/mkimage_imx8.c
++++ b/iMX8M/mkimage_imx8.c
+@@ -23,7 +23,6 @@
+ #include <unistd.h>
+ #include <sys/mman.h>
+ #include <sys/types.h>
+-#include <zlib.h>
+ 
+ #ifndef O_BINARY
+ #define O_BINARY 0
