@@ -64,6 +64,7 @@
             dd if=/dev/zero of=$out/sd.img bs=1M count=128
             mkfs.vfat $out/sd.img
 
+            cp ${ubootAarch64Rpi4}/u-boot.bin $out
             cp ${rpiFirmware}/boot/start4.elf $out/firmware
             cp ${rpiFirmware}/boot/fixup4.dat $out/firmware
             cp ${rpiFirmware}/boot/bcm2711-rpi-4-b.dtb $out/firmware
