@@ -75,7 +75,7 @@
 
             dd if=/dev/zero of=$out/sd.img bs=1M count=128
             sfdisk --no-reread --no-tell-kernel $out/sd.img <<EOF
-              label: gpt
+              label: dos
 
               start=2048,size=64M
             EOF
