@@ -58,12 +58,12 @@
           '';
         };
 
-        imageAarch64Rpi4 = pkgs.runCommand "image-aarch64-rpi4" { nativeBuildInputs = with pkgs; [ mtools dosfstools]; }
+        imageAarch64Rpi4 = pkgs.runCommand "image-aarch64-rpi4" { nativeBuildInputs = with pkgs; [ mtools dosfstools util-linux ]; }
           ''
             mkdir -p $out/firmware
 
-            dd if=/dev/zero of=$out/sd.img bs=1M count=128
-            mkfs.vfat $out/sd.img
+            dd if=/dev/zero of=$out/boot_part.img bs=1M count=64
+            mkfs.vfat $out/boot_part.img
 
             cp ${ubootAarch64Rpi4}/u-boot.bin $out
             cp ${rpiFirmware}/boot/start4.elf $out/firmware
@@ -72,6 +72,13 @@
             cp -r ${rpiFirmware}/boot/overlays $out/firmware/overlays
 
             mcopy -i $out/sd.img -s $out/firmware/* ${ubootAarch64Rpi4}/u-boot.bin ${rpi4ConfigTxt}/config.txt ::
+
+            dd if=/dev/zero of=$out/sd.img bs=1M count=128
+            sfdisk --no-reread --no-tell-kernel $out/sd.img <<EOF
+              label: gpt
+
+              start=2048,size=64M,type=b
+            EOF
           ''
         ;
 
