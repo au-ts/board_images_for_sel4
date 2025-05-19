@@ -71,14 +71,15 @@
             cp ${rpiFirmware}/boot/bcm2711-rpi-4-b.dtb $out/firmware
             cp -r ${rpiFirmware}/boot/overlays $out/firmware/overlays
 
-            mcopy -i $out/sd.img -s $out/firmware/* ${ubootAarch64Rpi4}/u-boot.bin ${rpi4ConfigTxt}/config.txt ::
+            mcopy -i $out/boot_part.img -s $out/firmware/* ${ubootAarch64Rpi4}/u-boot.bin ${rpi4ConfigTxt}/config.txt ::
 
             dd if=/dev/zero of=$out/sd.img bs=1M count=128
             sfdisk --no-reread --no-tell-kernel $out/sd.img <<EOF
               label: gpt
 
-              start=2048,size=64M,type=b
+              start=2048,size=64M
             EOF
+            dd if=$out/boot_part.img of=$out/sd.img conv=notrunc seek=2048
           ''
         ;
 
