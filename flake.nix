@@ -29,11 +29,11 @@
 
         # TODO: had to create opensbi.nix due to needing extraMakeFlags instead of using
         # the nixpkgs opensbi.nix, is there a way to use usptream instead?
-        opensbi-riscv64-pine64-star64 = pkgs.pkgsCross.riscv64.callPackage ./opensbi.nix {
-          extraMakeFlags = [
+        opensbi-riscv64-pine64-star64 = pkgs.pkgsCross.riscv64.opensbi.overrideAttrs (oldattrs: {
+          makeFlags = [
             "FW_TEXT_START=0x40000000"
-          ];
-        };
+          ] ++ oldattrs.makeFlags;
+        });
 
         amlogicBootFip = pkgs.fetchFromGitHub {
           owner = "LibreELEC";
