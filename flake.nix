@@ -27,8 +27,6 @@
           hash = "sha256-UPy7XM1NGjbEt+pQr4oQrzD7wWWEtYDOPWTD+CNYMHs=";
         };
 
-        # TODO: had to create opensbi.nix due to needing extraMakeFlags instead of using
-        # the nixpkgs opensbi.nix, is there a way to use usptream instead?
         opensbi-riscv64-pine64-star64 = pkgs.pkgsCross.riscv64.opensbi.overrideAttrs (oldattrs: {
           makeFlags = [
             "FW_TEXT_START=0x40000000"
@@ -218,7 +216,8 @@
 
           buildPhase = ''
             mkdir -p $out
-            bash ${./build-fip.sh} odroid-c4 ${ubootAarch64Odroidc4.outPath}/u-boot.bin $out
+            patchShebangs odroid-c4/blx_fix.sh
+            bash ./build-fip.sh odroid-c4 ${ubootAarch64Odroidc4.outPath}/u-boot.bin $out
           ''
           ;
         };
