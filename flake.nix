@@ -77,7 +77,7 @@
             sfdisk --no-reread --no-tell-kernel $out/sd.img <<EOF
               label: dos
 
-              start=2048,size=64M
+              start=2048,size=64M,type=b
             EOF
             dd if=$out/boot_part.img of=$out/sd.img conv=notrunc seek=2048
           ''
