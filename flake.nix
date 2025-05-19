@@ -48,13 +48,28 @@
           hash = "sha256-U41EgEDny1R+JFktSC/3CE+2Qi7GJludj929ft49Nm0=";
         };
 
-        imageAarch64Rpi4 = pkgs.runCommand "image-aarch64-rpi4" {}
+        rpi4ConfigTxt = pkgs.writeText {
+          name = "config.txt";
+          text = ''
+            enable_uart=1
+            arm_64bit=1
+            kernel=u-boot.bin
+          '';
+        };
+
+        imageAarch64Rpi4 = pkgs.runCommand "image-aarch64-rpi4" { nativeBuildInputs = with pkgs; [ dosfstools]; }
           ''
             mkdir -p $out/firmware
+
+            dd if=/dev/zero of=$out/sd.img bs=1M count=128
+            mkfs.vfat $out/sd.img
+
             cp ${rpiFirmware}/boot/start4.elf $out/firmware
             cp ${rpiFirmware}/boot/fixup4.dat $out/firmware
             cp ${rpiFirmware}/boot/bcm2711-rpi-4-b.dtb $out/firmware
             cp -r ${rpiFirmware}/boot/overlays $out/firmware/overlays
+
+            mcopy -i $out/sd.img -s $out/firmware/* ${ubootAarch64Rpi4}/u-boot.bin ${rpi4ConfigTxt} ::
           ''
         ;
 
