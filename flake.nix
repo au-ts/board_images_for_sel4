@@ -67,7 +67,7 @@
             hash = "sha256-GTfbwkFXGbNoy/QbGyZS2VkL9OMBIvRxck3bFbopu50=";
           };
 
-          nativeBuildInputs = with pkgs; [ musl zlib.static ];
+          nativeBuildInputs = with pkgs; [ musl zlib.static dtc ];
 
           makeFlags = [
             "CC=musl-gcc"
@@ -75,9 +75,16 @@
             "flash_ddr4_val"
           ];
 
+          # TODO: get rid of this patch
           patches = [ ./imx-mkimage-patch ];
+          hardeningDisable = ["all"];
+
+          postPatch = ''
+            patchShebangs scripts/
+          '';
 
           preBuild = ''
+            cp ${ubootAarch64Maaxboard}/u-boot-nodtb.bin iMX8M
             cp ${ubootAarch64Maaxboard}/u-boot-spl.bin iMX8M
             cp ${ubootAarch64Maaxboard}/maaxboard.dtb iMX8M/fsl-imx8mq-ddr4-arm2.dtb
             cp ${ubootAarch64Maaxboard}/mkimage iMX8M/mkimage_uboot
@@ -90,9 +97,14 @@
             cp ${avnetImxFirmware}/ddr4_imem_2d_202006.bin iMX8M/ddr4_imem_2d.bin
             cp ${avnetImxFirmware}/signed_hdmi_imx8m.bin iMX8M/
           '';
+
+          installPhase = ''
+            mkdir -p $out
+            cp iMX8M/flash.bin $out/
+          '';
         };
 
-        avnetImxAtf = pkgs.pkgsCross.aarch64-multiplatform.stdenv.mkDerivation rec {
+        avnetImxAtf = pkgs.stdenv.mkDerivation rec {
           name = "avnet-imx-atf";
           src = pkgs.fetchFromGitHub {
             owner = "Avnet";
@@ -100,6 +112,8 @@
             rev = "maaxboard-imx_5.4.24_2.1.0";
             hash = "sha256-pDueidAeGysIj0R12NdqKBuZN/f7sCqjH1Kz8BWoYa4=";
           };
+
+          nativeBuildInputs = [ pkgs.pkgsCross.aarch64-multiplatform.stdenv.cc ];
 
           makeFlags = [
             "CROSS_COMPILE=${pkgs.pkgsCross.aarch64-multiplatform.stdenv.cc.targetPrefix}"
