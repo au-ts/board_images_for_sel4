@@ -50,6 +50,7 @@
 
         rpi4ConfigTxt = pkgs.writeTextFile {
           name = "config.txt";
+          destination = "config.txt";
           text = ''
             enable_uart=1
             arm_64bit=1
