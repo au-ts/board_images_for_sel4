@@ -48,7 +48,7 @@
           hash = "sha256-U41EgEDny1R+JFktSC/3CE+2Qi7GJludj929ft49Nm0=";
         };
 
-        rpi4ConfigTxt = pkgs.writeText {
+        rpi4ConfigTxt = pkgs.writeTextFile {
           name = "config.txt";
           text = ''
             enable_uart=1
@@ -57,7 +57,7 @@
           '';
         };
 
-        imageAarch64Rpi4 = pkgs.runCommand "image-aarch64-rpi4" { nativeBuildInputs = with pkgs; [ dosfstools]; }
+        imageAarch64Rpi4 = pkgs.runCommand "image-aarch64-rpi4" { nativeBuildInputs = with pkgs; [ mtools dosfstools]; }
           ''
             mkdir -p $out/firmware
 
