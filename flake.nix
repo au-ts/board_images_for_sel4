@@ -92,7 +92,7 @@
             hash = "sha256-GTfbwkFXGbNoy/QbGyZS2VkL9OMBIvRxck3bFbopu50=";
           };
 
-          nativeBuildInputs = with pkgs; [ musl zlib.static dtc ];
+          nativeBuildInputs = with pkgs; [ musl zlib.dev zlib.static dtc ];
 
           makeFlags = [
             "CC=musl-gcc"
@@ -100,8 +100,6 @@
             "flash_ddr4_val"
           ];
 
-          # TODO: get rid of this patch
-          patches = [ ./imx-mkimage-patch ];
           hardeningDisable = ["all"];
 
           postPatch = ''
