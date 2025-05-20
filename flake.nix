@@ -208,7 +208,7 @@
           extraMeta.platforms = [ "aarch64-linux" ];
           version = ubootVersion;
           defconfig = "rockpro64-rk3399_defconfig";
-          BL31= "${pkgs.pkgsCross.aarch64-multiplatform.armTrustedFirmwareRK3399}/bl31.elf";
+          BL31 = "${pkgs.pkgsCross.aarch64-multiplatform.armTrustedFirmwareRK3399}/bl31.elf";
           filesToInstall = [
             "u-boot.bin"
             "u-boot.itb"
