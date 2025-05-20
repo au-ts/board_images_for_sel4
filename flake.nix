@@ -304,7 +304,8 @@
         packages.avnet-imx-firmware = avnetImxFirmware;
         packages.avnet-imx-atf = avnetImxAtf;
         packages.avnet-imx-mkimage = avnetImxMkimage;
-        packages.uboot-aarch64-maaxboard = ubootAarch64Maaxboard;
+        packages.maaxboard-uboot-aarch64 = ubootAarch64Maaxboard;
+        packages.maaxboard-image-aarch64 = avnetImxMkimage;
 
         packages.odroidc4-uboot-aarch64 = ubootAarch64Odroidc4;
         packages.odroidc4-image-microsd-aarch64 = imageAarch64Odroidc4;
