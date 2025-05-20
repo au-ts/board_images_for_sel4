@@ -210,12 +210,21 @@
           defconfig = "rockpro64-rk3399_defconfig";
           BL31 = "${pkgs.pkgsCross.aarch64-multiplatform.armTrustedFirmwareRK3399}/bl31.elf";
           filesToInstall = [
+            "u-boot-rockchip.bin"
             "u-boot.bin"
             "u-boot.itb"
             "idbloader.img"
           ];
           src = mainlineUboot;
         };
+
+        rockpro64Image = pkgs.runCommand "star64-riscv64-image" {}
+          ''
+            mkdir -p $out
+            dd if=/dev/zero of=$out/sd.img bs=1M count=64
+            dd if=${ubootAarch64Rockpro64}/u-boot-rockchip.bin of=$out/sd.img conv=notrunc seek=64
+          ''
+        ;
 
         ubootAarch64Rpi4 = pkgs.pkgsCross.aarch64-multiplatform.buildUBoot rec {
           extraMeta.platforms = [ "aarch64-linux" ];
@@ -308,5 +317,6 @@
         packages.rpi4-image-aarch64 = imageAarch64Rpi4;
 
         packages.rockpro64-uboot-aarch64 = ubootAarch64Rockpro64;
+        packages.rockpro64-image-aarch64 = rockpro64Image;
       });
 }

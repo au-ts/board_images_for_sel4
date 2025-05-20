@@ -2,7 +2,7 @@ TODO
 
 * [ ] RockPro64
     * [x] U-Boot
-    * [ ] SD card image
+    * [x] SD card image
     * [ ] Test
 * [ ] Avnet MaaXBoard
     * [x] U-Boot
