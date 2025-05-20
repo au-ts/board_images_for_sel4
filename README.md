@@ -14,7 +14,7 @@ TODO
     * [x] Test
 * [ ] Odroid-C4
     * [x] U-Boot
-    * [ ] SD card image
+    * [x] SD card image
     * [ ] Test
 * [ ] Pine64 Star64
     * [x] U-Boot

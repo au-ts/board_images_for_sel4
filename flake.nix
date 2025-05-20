@@ -218,7 +218,7 @@
           src = mainlineUboot;
         };
 
-        rockpro64Image = pkgs.runCommand "star64-riscv64-image" {}
+        rockpro64Image = pkgs.runCommand "rockpro64-aarch64-image" {}
           ''
             mkdir -p $out
             dd if=/dev/zero of=$out/sd.img bs=1M count=64
@@ -270,6 +270,15 @@
           ;
         };
 
+        sdcardOdroidc4 = pkgs.runCommand "odroidc4-aarch64-image" {}
+          ''
+            mkdir -p $out
+            dd if=/dev/zero of=$out/sd.img bs=1M count=64
+            dd if=${imageAarch64Odroidc4}/u-boot.bin.sd.bin of=$out/sd.img conv=notrunc bs=512 skip=1 seek=1
+            dd if=${imageAarch64Odroidc4}/u-boot.bin.sd.bin of=$out/sd.img conv=notrunc bs=1 count=440
+          ''
+        ;
+
         uBootRiscv64Star64 = pkgs.pkgsCross.riscv64.buildUBoot rec {
             extraMeta.platforms = [ "riscv64-linux" ];
             version = ubootVersion;
@@ -311,7 +320,7 @@
         packages.maaxboard-image-aarch64 = avnetImxMkimage;
 
         packages.odroidc4-uboot-aarch64 = ubootAarch64Odroidc4;
-        packages.odroidc4-image-microsd-aarch64 = imageAarch64Odroidc4;
+        packages.odroidc4-image-microsd-aarch64 = sdcardOdroidc4;
 
         packages.rpi4-uboot-aarch64 = ubootAarch64Rpi4;
         packages.rpi4-image-aarch64 = imageAarch64Rpi4;
