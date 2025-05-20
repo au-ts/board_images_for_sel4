@@ -3,15 +3,20 @@ TODO
 * [ ] RockPro64
     * [x] U-Boot
     * [ ] SD card image
+    * [ ] Test
 * [ ] Avnet MaaXBoard
     * [x] U-Boot
     * [ ] SD card image
-* [ ] Raspberry Pi 4
+    * [ ] Test
+* [x] Raspberry Pi 4
     * [x] U-Boot
-    * [ ] SD card image
+    * [x] SD card image
+    * [x] Test
 * [ ] Odroid-C4
     * [x] U-Boot
     * [ ] SD card image
+    * [ ] Test
 * [ ] Pine64 Star64
     * [x] U-Boot
-    * [ ] SD card image
+    * [x] SD card image
+    * [ ] Test
