@@ -83,6 +83,14 @@
           ''
         ;
 
+        maaxboardImage = pkgs.runCommand "maaxboard-aarch64-image" {}
+          ''
+            mkdir -p $out
+            dd if=/dev/zero of=$out/sd.img bs=1M count=32
+            dd if=${avnetImxMkimage}/flash.bin of=$out/sd.img conv=notrunc bs=1K seek=33
+          ''
+        ;
+
         avnetImxMkimage = pkgs.stdenv.mkDerivation rec {
           name = "avnet-imx-mkimage";
           src = pkgs.fetchFromGitHub {
@@ -315,7 +323,7 @@
         packages.avnet-imx-atf = avnetImxAtf;
         packages.avnet-imx-mkimage = avnetImxMkimage;
         packages.maaxboard-uboot-aarch64 = ubootAarch64Maaxboard;
-        packages.maaxboard-image-aarch64 = avnetImxMkimage;
+        packages.maaxboard-image-aarch64 = maaxboardImage;
 
         packages.odroidc4-uboot-aarch64 = ubootAarch64Odroidc4;
         packages.odroidc4-image-microsd-aarch64 = sdcardOdroidc4;
