@@ -314,6 +314,18 @@
             dd if=${star64Riscv64Uboot}/u-boot.itb of=$out/sd.img conv=notrunc seek=8192
           ''
         ;
+
+        allImages = pkgs.runCommand "all-images" {}
+          ''
+            mkdir -p $out
+
+            cp ${star64Riscv64Image}/sd.img $out/star64-riscv64.img
+            cp ${maaxboardAarch64Image}/sd.img $out/maaxboard-aarch64.img
+            cp ${odroidc4Aarch64Image}/sd.img $out/odroidc4-aarch64.img
+            cp ${rpi4Aarch64Image}/sd.img $out/rpi4-aarch64.img
+            cp ${rockpro64Aarch64Image}/sd.img $out/rockpro64-aarch64.img
+          ''
+        ;
       in
       {
         # All packages have the format <BOARD>-<ARCH>-<ARTIFACT>
@@ -333,12 +345,6 @@
         packages.rockpro64-aarch64-uboot = rockpro64Aarch64Uboot;
         packages.rockpro64-aarch64-image = rockpro64Aarch64Image;
 
-        packages.${system}.default = [
-          packages.star64-riscv64-image
-          packages.maaxboard-aarch64-image
-          packages.odroidc4-aarch64-image
-          packages.rpi4-aarch64-image
-          packages.rockpro64-aarch64-image
-        ];
+        packages.default = allImages;
       });
 }
