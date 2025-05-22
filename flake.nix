@@ -332,5 +332,13 @@
 
         packages.rockpro64-aarch64-uboot = rockpro64Aarch64Uboot;
         packages.rockpro64-aarch64-image = rockpro64Aarch64Image;
+
+        packages.${system}.default = [
+          packages.star64-riscv64-image
+          packages.maaxboard-aarch64-image
+          packages.odroidc4-aarch64-image
+          packages.rpi4-aarch64-image
+          packages.rockpro64-aarch64-image
+        ];
       });
 }
