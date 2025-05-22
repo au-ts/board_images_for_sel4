@@ -315,7 +315,7 @@
           ''
         ;
 
-        allImages = pkgs.runCommand "all-images" {}
+        allImages = pkgs.runCommand "all-images" { nativeBuildInputs = with pkgs; [ gnutar gzip ]; }
           ''
             mkdir -p $out
 
@@ -324,6 +324,9 @@
             cp ${odroidc4Aarch64Image}/sd.img $out/odroidc4-aarch64.img
             cp ${rpi4Aarch64Image}/sd.img $out/rpi4-aarch64.img
             cp ${rockpro64Aarch64Image}/sd.img $out/rockpro64-aarch64.img
+
+            cd $out
+            for f in *.img; do tar cf - $f | gzip -9 > `basename $f`.tar.gz; done
           ''
         ;
       in
