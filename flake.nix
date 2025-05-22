@@ -58,20 +58,20 @@
           '';
         };
 
-        imageAarch64Rpi4 = pkgs.runCommand "image-aarch64-rpi4" { nativeBuildInputs = with pkgs; [ mtools dosfstools util-linux ]; }
+        rpi4Aarch64Image = pkgs.runCommand "image-aarch64-rpi4" { nativeBuildInputs = with pkgs; [ mtools dosfstools util-linux ]; }
           ''
             mkdir -p $out/firmware
 
             dd if=/dev/zero of=$out/boot_part.img bs=1M count=64
             mkfs.vfat $out/boot_part.img
 
-            cp ${ubootAarch64Rpi4}/u-boot.bin $out
+            cp ${rpi4Aarch64Uboot}/u-boot.bin $out
             cp ${rpiFirmware}/boot/start4.elf $out/firmware
             cp ${rpiFirmware}/boot/fixup4.dat $out/firmware
             cp ${rpiFirmware}/boot/bcm2711-rpi-4-b.dtb $out/firmware
             cp -r ${rpiFirmware}/boot/overlays $out/firmware/overlays
 
-            mcopy -i $out/boot_part.img -s $out/firmware/* ${ubootAarch64Rpi4}/u-boot.bin ${rpi4ConfigTxt}/config.txt ::
+            mcopy -i $out/boot_part.img -s $out/firmware/* ${rpi4Aarch64Uboot}/u-boot.bin ${rpi4ConfigTxt}/config.txt ::
 
             dd if=/dev/zero of=$out/sd.img bs=1M count=128
             sfdisk --no-reread --no-tell-kernel $out/sd.img <<EOF
@@ -83,7 +83,7 @@
           ''
         ;
 
-        maaxboardImage = pkgs.runCommand "maaxboard-aarch64-image" {}
+        maaxboardAarch64Image = pkgs.runCommand "maaxboard-aarch64-image" {}
           ''
             mkdir -p $out
             dd if=/dev/zero of=$out/sd.img bs=1M count=32
@@ -115,10 +115,10 @@
           '';
 
           preBuild = ''
-            cp ${ubootAarch64Maaxboard}/u-boot-nodtb.bin iMX8M
-            cp ${ubootAarch64Maaxboard}/u-boot-spl.bin iMX8M
-            cp ${ubootAarch64Maaxboard}/maaxboard.dtb iMX8M/fsl-imx8mq-ddr4-arm2.dtb
-            cp ${ubootAarch64Maaxboard}/mkimage iMX8M/mkimage_uboot
+            cp ${maaxboardAarch64Uboot}/u-boot-nodtb.bin iMX8M
+            cp ${maaxboardAarch64Uboot}/u-boot-spl.bin iMX8M
+            cp ${maaxboardAarch64Uboot}/maaxboard.dtb iMX8M/fsl-imx8mq-ddr4-arm2.dtb
+            cp ${maaxboardAarch64Uboot}/mkimage iMX8M/mkimage_uboot
 
             cp ${avnetImxAtf}/bl31.bin iMX8M/
 
@@ -186,7 +186,7 @@
           '';
         };
 
-        ubootAarch64Maaxboard = pkgs.pkgsCross.aarch64-multiplatform.buildUBoot rec {
+        maaxboardAarch64Uboot = pkgs.pkgsCross.aarch64-multiplatform.buildUBoot rec {
           extraMeta.platforms = [ "aarch64-linux" ];
           # There are multiple branches that could work on the Avnet fork of U-Boot. This one
           # was chosen as it is known to work.
@@ -210,7 +210,7 @@
           };
         };
 
-        ubootAarch64Rockpro64 = pkgs.pkgsCross.aarch64-multiplatform.buildUBoot rec {
+        rockpro64Aarch64Uboot = pkgs.pkgsCross.aarch64-multiplatform.buildUBoot rec {
           extraMeta.platforms = [ "aarch64-linux" ];
           version = ubootVersion;
           defconfig = "rockpro64-rk3399_defconfig";
@@ -224,15 +224,15 @@
           src = mainlineUboot;
         };
 
-        rockpro64Image = pkgs.runCommand "rockpro64-aarch64-image" {}
+        rockpro64Aarch64Image = pkgs.runCommand "rockpro64-aarch64-image" {}
           ''
             mkdir -p $out
             dd if=/dev/zero of=$out/sd.img bs=1M count=64
-            dd if=${ubootAarch64Rockpro64}/u-boot-rockchip.bin of=$out/sd.img conv=notrunc seek=64
+            dd if=${rockpro64Aarch64Uboot}/u-boot-rockchip.bin of=$out/sd.img conv=notrunc seek=64
           ''
         ;
 
-        ubootAarch64Rpi4 = pkgs.pkgsCross.aarch64-multiplatform.buildUBoot rec {
+        rpi4Aarch64Uboot = pkgs.pkgsCross.aarch64-multiplatform.buildUBoot rec {
           extraMeta.platforms = [ "aarch64-linux" ];
           version = ubootVersion;
           defconfig = "rpi_4_defconfig";
@@ -258,7 +258,7 @@
           src = mainlineUboot;
         };
 
-        imageAarch64Odroidc4 = pkgs.stdenv.mkDerivation rec {
+        odroidc4Aarch64Uboot = pkgs.stdenv.mkDerivation rec {
           name = "image-aarch64-odroidc4";
           src = pkgs.fetchFromGitHub {
             owner = "LibreELEC";
@@ -276,16 +276,16 @@
           ;
         };
 
-        sdcardOdroidc4 = pkgs.runCommand "odroidc4-aarch64-image" {}
+        odroidc4Aarch64Image = pkgs.runCommand "odroidc4-aarch64-image" {}
           ''
             mkdir -p $out
             dd if=/dev/zero of=$out/sd.img bs=1M count=64
-            dd if=${imageAarch64Odroidc4}/u-boot.bin.sd.bin of=$out/sd.img conv=notrunc bs=512 skip=1 seek=1
-            dd if=${imageAarch64Odroidc4}/u-boot.bin.sd.bin of=$out/sd.img conv=notrunc bs=1 count=440
+            dd if=${odroidc4Aarch64Uboot}/u-boot.bin.sd.bin of=$out/sd.img conv=notrunc bs=512 skip=1 seek=1
+            dd if=${odroidc4Aarch64Uboot}/u-boot.bin.sd.bin of=$out/sd.img conv=notrunc bs=1 count=440
           ''
         ;
 
-        uBootRiscv64Star64 = pkgs.pkgsCross.riscv64.buildUBoot rec {
+        star64Riscv64Uboot = pkgs.pkgsCross.riscv64.buildUBoot rec {
             extraMeta.platforms = [ "riscv64-linux" ];
             version = ubootVersion;
             defconfig = "starfive_visionfive2_defconfig";
@@ -301,7 +301,7 @@
             src = mainlineUboot;
         };
 
-        star64Image = pkgs.runCommand "star64-riscv64-image" { nativeBuildInputs = with pkgs; [ gptfdisk ]; }
+        star64Riscv64Image = pkgs.runCommand "star64-riscv64-image" { nativeBuildInputs = with pkgs; [ gptfdisk ]; }
           ''
             mkdir -p $out
             dd if=/dev/zero of=$out/sd.img bs=1M count=64
@@ -310,28 +310,27 @@
               --new=1:4096:8191 --change-name=1:spl --typecode=1:2E54B353-1271-4842-806F-E436D6AF6985\
               --new=2:8192:16383 --change-name=2:uboot --typecode=2:BC13C2FF-59E6-4262-A352-B275FD6F7172  \
               $out/sd.img
-            dd if=${uBootRiscv64Star64}/u-boot-spl.bin.normal.out of=$out/sd.img conv=notrunc seek=4096
-            dd if=${uBootRiscv64Star64}/u-boot.itb of=$out/sd.img conv=notrunc seek=8192
+            dd if=${star64Riscv64Uboot}/u-boot-spl.bin.normal.out of=$out/sd.img conv=notrunc seek=4096
+            dd if=${star64Riscv64Uboot}/u-boot.itb of=$out/sd.img conv=notrunc seek=8192
           ''
         ;
       in
       {
-        packages.star64-riscv64-uboot = uBootRiscv64Star64;
-        packages.star64-riscv64-image = star64Image;
+        # All packages have the format <BOARD>-<ARCH>-<ARTIFACT>
 
-        packages.avnet-imx-firmware = avnetImxFirmware;
-        packages.avnet-imx-atf = avnetImxAtf;
-        packages.avnet-imx-mkimage = avnetImxMkimage;
-        packages.maaxboard-uboot-aarch64 = ubootAarch64Maaxboard;
-        packages.maaxboard-image-aarch64 = maaxboardImage;
+        packages.star64-riscv64-uboot = star64Riscv64Uboot;
+        packages.star64-riscv64-image = star64Riscv64Image;
 
-        packages.odroidc4-uboot-aarch64 = ubootAarch64Odroidc4;
-        packages.odroidc4-image-microsd-aarch64 = sdcardOdroidc4;
+        packages.maaxboard-aarch64-uboot = maaxboardAarch64Uboot;
+        packages.maaxboard-aarch64-image = maaxboardAarch64Image;
 
-        packages.rpi4-uboot-aarch64 = ubootAarch64Rpi4;
-        packages.rpi4-image-aarch64 = imageAarch64Rpi4;
+        packages.odroidc4-aarch64-uboot = odroidc4Aarch64Uboot;
+        packages.odroidc4-aarch64-image = odroidc4Aarch64Image;
 
-        packages.rockpro64-uboot-aarch64 = ubootAarch64Rockpro64;
-        packages.rockpro64-image-aarch64 = rockpro64Image;
+        packages.rpi4-aarch64-uboot = rpi4Aarch64Uboot;
+        packages.rpi4-aarch64-image = rpi4Aarch64Image;
+
+        packages.rockpro64-aarch64-uboot = rockpro64Aarch64Uboot;
+        packages.rockpro64-aarch64-image = rockpro64Aarch64Image;
       });
 }
