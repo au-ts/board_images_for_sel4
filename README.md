@@ -1,33 +1,43 @@
-TODO
+# Flashable images for seL4 development
 
-* [x] RockPro64
-    * [x] U-Boot
-    * [x] SD card image
-    * [x] Test
-* [x] Avnet MaaXBoard
-    * [x] U-Boot
-    * [x] SD card image
-    * [x] Test
-* [x] Raspberry Pi 4
-    * [x] U-Boot
-    * [x] SD card image
-    * [x] Test
-* [x] Odroid-C4
-    * [x] U-Boot
-    * [x] SD card image
-    * [x] Test
+This repository aims to provide ready-to-go, reproducible, images
+that can be used for seL4 development.
 
-Now that all the testing is done, I want to have a certain
-partition setup for each disk.
-Same as maaxboard's do currently, one partition for fat32,
-one clear partition for whatever else.
+All images are available for download from the [releases page]
+(https://github.com/au-ts/board_images_for_sel4/releases/latest).
 
+## Available images
 
-------------
+* Avnet MaaXBoard
+* HardKernel Odroid-C4
+* Raspberry Pi 4B
+* Pine64 RockPRO64
 
-Giving up on Star64 since it has weird TFTPboot timeouts that
-I don't know what to do about.
-* [ ] Pine64 Star64
-    * [x] U-Boot
-    * [x] SD card image
-    * [ ] Test
+## Building from source
+
+To build from source you must be using Linux and have [Nix](https://nixos.org/download/)
+installed.
+
+To build all available images from source, run:
+```sh
+nix build .
+```
+
+The images will be in `result/`.
+
+For each board there are two artifacts:
+* Compiled U-Boot
+* Flashable image (e.g for microSD card or eMMC)
+
+To build a specific package run:
+```sh
+nix build .#<BOARD>-<ARCHITECTURE>-<ARTIFACT>
+```
+
+For example, to build the image for the Raspberry Pi 4B:
+```sh
+nix build .#rpi4-aarch64-image
+```
+
+The image will be in `result/`.
+
