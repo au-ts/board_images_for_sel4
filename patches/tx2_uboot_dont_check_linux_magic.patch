@@ -1,0 +1,13 @@
+diff --git a/boot/bootm.c b/boot/bootm.c
+index 16a43d519a..9913152ad5 100644
+--- a/boot/bootm.c
++++ b/boot/bootm.c
+@@ -670,7 +670,7 @@ static int bootm_load_os(struct bootm_headers *images, int boot_progress)
+ 		}
+ 	}
+ 
+-	if (IS_ENABLED(CONFIG_CMD_BOOTI) && images->os.arch == IH_ARCH_ARM64 &&
++	if (false && IS_ENABLED(CONFIG_CMD_BOOTI) && images->os.arch == IH_ARCH_ARM64 &&
+ 	    images->os.os == IH_OS_LINUX) {
+ 		ulong relocated_addr;
+ 		ulong image_size;
