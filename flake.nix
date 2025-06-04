@@ -224,6 +224,25 @@
           src = mainlineUboot;
         };
 
+        tx2Uboot = pkgs.pkgsCross.aarch64-multiplatform.buildUBoot rec {
+          extraMeta.platforms = [ "aarch64-linux" ];
+          version = ubootVersion;
+          defconfig = "p2771-0000-500_defconfig";
+          filesToInstall = [
+            "u-boot.bin"
+            "u-boot.dtb"
+          ];
+          extraPatches = [
+            ./patches/tx2_uboot_dont_check_linux_magic.patch
+          ];
+          extraConfig = ''
+            # The default is 8MiB which is too small for some images
+            # Make it 64MiB instead.
+            CONFIG_SYS_BOOTM_LEN=0x4000000
+          '';
+          src = mainlineUboot;
+        };
+
         rockpro64Aarch64Image = pkgs.runCommand "rockpro64-aarch64-image" {}
           ''
             mkdir -p $out
@@ -247,7 +266,7 @@
           version = ubootVersion;
           defconfig = "odroid-c4_defconfig";
           # The defconfig does not setup 'saveenv' to work properly, so we do that here.
-          extraConfing = ''
+          extraConfig = ''
             CONFIG_ENV_IS_NOWHERE=n
             CONFIG_ENV_IS_IN_MMC=y
             CONFIG_ENV_OFFSET=0x10000000
@@ -347,6 +366,8 @@
 
         packages.rockpro64-aarch64-uboot = rockpro64Aarch64Uboot;
         packages.rockpro64-aarch64-image = rockpro64Aarch64Image;
+
+        packages.tx2-uboot = tx2Uboot;
 
         packages.default = allImages;
       });
