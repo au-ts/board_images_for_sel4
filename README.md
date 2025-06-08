@@ -8,7 +8,7 @@ All images are available for download from the
 
 ## Available images
 
-There are prebuild images available for the following platforms:
+There are prebuild images available for the following boards:
 
 * Avnet MaaXBoard
 * HardKernel Odroid-C4
