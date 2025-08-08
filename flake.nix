@@ -350,6 +350,7 @@
             "PLATFORM_RISCV_ABI=lp64"
             "FW_DYNAMIC=y"
             "FW_JUMP=y"
+            "FW_JUMP_ADDR=0x90000000"
             "FW_PAYLOAD=y"
           ];
         })).override {
