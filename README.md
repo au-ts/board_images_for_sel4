@@ -11,6 +11,7 @@ All images are available for download from the
 There are prebuild images available for the following boards:
 
 * Avnet MaaXBoard
+* Cheshire
 * HardKernel Odroid-C4
 * Raspberry Pi 4B
 * Pine64 RockPRO64
