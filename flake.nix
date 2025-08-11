@@ -83,11 +83,25 @@
           ''
         ;
 
-        maaxboardAarch64Image = pkgs.runCommand "maaxboard-aarch64-image" {}
+        maaxboardAarch64Image = pkgs.runCommand "maaxboard-aarch64-image" { nativeBuildInputs = with pkgs; [ dosfstools util-linux ]; }
           ''
             mkdir -p $out
-            dd if=/dev/zero of=$out/sd.img bs=1M count=32
+            dd if=/dev/zero of=$out/sd.img bs=1M count=256
+
+            sfdisk --no-reread --no-tell-kernel $out/sd.img <<EOF
+              label: dos
+
+              start=98304,size=64M,type=b
+              start=229376,size=64M,type=b
+              start=360448,size=64M,type=b
+            EOF
+
             dd if=${avnetImxMkimage}/flash.bin of=$out/sd.img conv=notrunc bs=1K seek=33
+
+            dd if=/dev/zero of=fat32_part.img bs=1M count=64
+            mkfs.vfat -F 32 fat32_part.img
+            dd if=fat32_part.img of=$out/sd.img bs=512 seek=98304
+            dd if=fat32_part.img of=$out/sd.img bs=512 seek=229376
           ''
         ;
 
