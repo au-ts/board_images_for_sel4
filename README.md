@@ -15,6 +15,7 @@ There are prebuild images available for the following boards:
 * HardKernel Odroid-C4
 * Raspberry Pi 4B
 * Pine64 RockPRO64
+* Pine64 Star64
 
 ### Usage
 
