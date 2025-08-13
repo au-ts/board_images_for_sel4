@@ -483,16 +483,16 @@
             extraConfig = ''
               CONFIG_AUTOBOOT=y
               CONFIG_BOOTDELAY=0
-              CONFIG_BOOTCOMMAND="setenv bootcmd_gdb 'bootm 0x90000000 - ''${fdtcontroladdr}'; echo 'First load the image over gdb to 0x90000000, then run bootcmd_gdb;'"
-
-              CONFIG_DEBUG_UART=y
-              CONFIG_DEBUG_UART_BASE=0x03002000
-              CONFIG_DEBUG_UART_CLOCK=50000000
-              CONFIG_DEBUG_UART_BOARD_INIT=y
-              CONFIG_DEBUG_UART_ANNOUNCE=y
-              CONFIG_DEBUG_UART_BOARD_INIT=n
-              CONFIG_DEBUG_UART_SHIFT=2
+              CONFIG_BOOTCOMMAND="setenv bootcmd_gdb 'bootm 0x90000000 - ''${fdtcontroladdr}'; echo 'First load the uImage as a binary to 0x90000000, then run bootcmd_gdb;'"
             '';
+
+            # CONFIG_DEBUG_UART=y
+            # CONFIG_DEBUG_UART_BASE=0x03002000
+            # CONFIG_DEBUG_UART_CLOCK=50000000
+            # CONFIG_DEBUG_UART_BOARD_INIT=y
+            # CONFIG_DEBUG_UART_ANNOUNCE=y
+            # CONFIG_DEBUG_UART_BOARD_INIT=n
+            # CONFIG_DEBUG_UART_SHIFT=2
 
             filesToInstall = [
               "u-boot"
