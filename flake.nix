@@ -240,6 +240,45 @@
           src = mainlineUboot;
         };
 
+        # TODO:
+        # fixup SD card image to actually be reproducible
+        # 'bootflow hunt ethernet' needs to happen for as part of the normal boot flow
+        # rather than being in the environment which we overwrite
+        nanopir5cAarch64Uboot = pkgs.pkgsCross.aarch64-multiplatform.buildUBoot rec {
+          extraMeta.platforms = [ "aarch64-linux" ];
+          version = ubootVersion;
+          defconfig = "nanopi-r5c-rk3568_defconfig";
+          BL31 = "${pkgs.pkgsCross.aarch64-multiplatform.armTrustedFirmwareRK3568}/bl31.elf";
+          ROCKCHIP_TPL = pkgs.rkbin.TPL_RK3568;
+          filesToInstall = [
+            ".config"
+            "u-boot-rockchip.bin"
+            "u-boot.bin"
+            "u-boot.itb"
+            "idbloader.img"
+          ];
+          extraConfig = ''
+            CONFIG_USE_ETHPRIME=y
+            CONFIG_ETHPRIME=eth0
+            CONFIG_ENV_FAT_INTERFACE=mmc
+            CONFIG_ENV_IS_NOWHERE=n
+            CONFIG_ENV_IS_IN_FAT=y
+            CONFIG_ENV_FAT_DEVICE_AND_PART="1:auto"
+            CONFIG_DWC_ETH_QOS=y
+            CONFIG_DWC_ETH_QOS_ROCKCHIP=y
+          '';
+          src = mainlineUboot;
+        };
+
+        nanopir5cAarch64Image = pkgs.runCommand "nanopi-r5c-aarch64-image" {}
+          ''
+            mkdir -p $out
+            dd if=/dev/zero of=$out/sd.img bs=1M count=128
+            dd if=${nanopir5cAarch64Uboot}/idbloader.img of=$out/sd.img conv=notrunc seek=8
+            dd if=${nanopir5cAarch64Uboot}/u-boot.itb of=$out/sd.img conv=notrunc seek=2048
+          ''
+        ;
+
         tx2Uboot = pkgs.pkgsCross.aarch64-multiplatform.buildUBoot rec {
           extraMeta.platforms = [ "aarch64-linux" ];
           version = ubootVersion;
@@ -545,6 +584,7 @@
             cp ${odroidc4Aarch64Image}/sd.img $out/odroidc4-aarch64.img
             cp ${rpi4Aarch64Image}/sd.img $out/rpi4-aarch64.img
             cp ${rockpro64Aarch64Image}/sd.img $out/rockpro64-aarch64.img
+            cp ${nanopir5cAarch64Image}/sd.img $out/nanopir5c-aarch64.img
             cp ${cheshireRiscv64Image}/sd.img $out/cheshire-riscv64.img
 
             cd $out
@@ -569,6 +609,9 @@
 
         packages.rockpro64-aarch64-uboot = rockpro64Aarch64Uboot;
         packages.rockpro64-aarch64-image = rockpro64Aarch64Image;
+
+        packages.nanopir5c-aarch64-uboot = nanopir5cAarch64Uboot;
+        packages.nanopir5c-aarch64-image = nanopir5cAarch64Image;
 
         packages.tx2-uboot = tx2Uboot;
 
