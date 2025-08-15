@@ -207,6 +207,7 @@
           version = "maaxboard_v2021.04_5.10.35_2.0.0";
           defconfig = "maaxboard_defconfig";
           filesToInstall = [
+            ".config"
             "u-boot.bin"
             "arch/arm/dts/maaxboard.dtb"
             "spl/u-boot-spl.bin"
@@ -230,6 +231,7 @@
           defconfig = "rockpro64-rk3399_defconfig";
           BL31 = "${pkgs.pkgsCross.aarch64-multiplatform.armTrustedFirmwareRK3399}/bl31.elf";
           filesToInstall = [
+            ".config"
             "u-boot-rockchip.bin"
             "u-boot.bin"
             "u-boot.itb"
@@ -243,6 +245,7 @@
           version = ubootVersion;
           defconfig = "p2771-0000-500_defconfig";
           filesToInstall = [
+            ".config"
             "u-boot.bin"
             "u-boot.dtb"
           ];
@@ -270,6 +273,7 @@
           version = ubootVersion;
           defconfig = "rpi_4_defconfig";
           filesToInstall = [
+            ".config"
             "u-boot.bin"
           ];
           src = mainlineUboot;
@@ -286,6 +290,7 @@
             CONFIG_ENV_OFFSET=0x10000000
           '';
           filesToInstall = [
+            ".config"
             "u-boot.bin"
           ];
           src = mainlineUboot;
@@ -328,6 +333,7 @@
             ];
 
             filesToInstall = [
+              ".config"
               "spl/u-boot-spl.bin.normal.out"
               "u-boot.itb"
             ];
@@ -486,6 +492,7 @@
             # CONFIG_DEBUG_UART_SHIFT=2
 
             filesToInstall = [
+              ".config"
               "u-boot"
               "u-boot.bin"
             ];
