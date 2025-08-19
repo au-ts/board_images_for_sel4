@@ -395,6 +395,9 @@
 
         # output: result/share/opensbi/lp64/fpga/cheshire/firmware/fw_payload.elf*
         cheshireRiscv64OpenSBI = (pkgs.pkgsCross.riscv64.opensbi.overrideAttrs (old: {
+          # Using a fork because we want FW_TEXT_START=0x80000000 but also, more importantly,
+          # that newer openSBI tries to use semihosting which is *extremely slow* under a debugger,
+          # and there is no way to just turn it off
           src = pkgs.fetchFromGitHub {
             owner = "pulp-platform";
             repo = "opensbi";
