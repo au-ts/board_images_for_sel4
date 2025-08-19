@@ -393,8 +393,16 @@
           ''
         ;
 
-        # output: result/share/opensbi/lp64/generic/firmware/fw_payload.elf*
+        # output: result/share/opensbi/lp64/fpga/cheshire/firmware/fw_payload.elf*
         cheshireRiscv64OpenSBI = (pkgs.pkgsCross.riscv64.opensbi.overrideAttrs (old: {
+          src = pkgs.fetchFromGitHub {
+            owner = "pulp-platform";
+            repo = "opensbi";
+            # cheshire branch
+            rev = "1156a7be33d5017a56815a283f640e8961fa9588";
+            hash = "sha256-CNEuV3TC4br7OE9nOeBKsArzp6o8Fy2XQrVCozeVMEE=";
+          };
+
           makeFlags = old.makeFlags ++ [
             "PLATFORM_RISCV_XLEN=64"
             "PLATFORM_RISCV_ISA=rv64imafdc_zicsr_zifencei"
@@ -405,6 +413,7 @@
             "FW_PAYLOAD=y"
           ];
         })).override {
+          withPlatform = "fpga/cheshire";
           withPayload = "${cheshireRiscv64Uboot}/u-boot.bin";
           withFDT = "${cheshire-sw}/cheshire.genesys2.dtb";
         };
@@ -568,7 +577,7 @@
 
             dd if=${cheshire-sw}/zsl.rom.bin of=$out/sd.img bs=512 seek=64 conv=notrunc
             dd if=${cheshire-sw}/cheshire.genesys2.dtb of=$out/sd.img bs=512 seek=128 conv=notrunc
-            dd if=${cheshireRiscv64OpenSBI}/share/opensbi/lp64/generic/firmware/fw_payload.bin of=$out/sd.img bs=512 seek=2048 conv=notrunc
+            dd if=${cheshireRiscv64OpenSBI}/share/opensbi/lp64/fpga/cheshire/firmware/fw_payload.bin of=$out/sd.img bs=512 seek=2048 conv=notrunc
 
             # linux not supported; partitions 4 and 5 are unused.
             # dd if=uImage of=$out/sd.img bs=512 seek=8192 conv=notrunc
