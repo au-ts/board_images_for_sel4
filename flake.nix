@@ -215,7 +215,7 @@
             "u-boot-nodtb.bin"
           ];
           # Nix buildUBoot tries to apply Rasbperry Pi specific patches to the source
-          # which doesn't work for forks.
+          # which doesn't work for certain forks.
           dontPatch = true;
           src = pkgs.fetchFromGitHub {
             owner = "Avnet";
@@ -383,6 +383,28 @@
               repo = "u-boot";
               rev = "27cda8f697e3990b4bea728c1066733259b7aa95";
               hash = "sha256-0vqd3QdnBAuwA74PxDVLuVkcPGEYyMWsCFX3zpS0LLA=";
+            };
+        };
+
+        milkvJupiterRiscv64Uboot = pkgs.pkgsCross.riscv64.buildUBoot rec {
+            extraMeta.platforms = [ "riscv64-linux" ];
+            version = "k1-bl-v2.2.7-release";
+            defconfig = "k1_defconfig";
+
+            filesToInstall = [
+              ".config"
+              "u-boot.bin"
+            ];
+
+            # Nix buildUBoot tries to apply Rasbperry Pi specific patches to the source
+            # which doesn't work for certain forks.
+            dontPatch = true;
+
+            src = pkgs.fetchFromGitHub {
+              owner = "Ivan-Velickovic";
+              repo = "uboot_spacemit_k1";
+              rev = "k1-bl-v2.2.7-release";
+              hash = "sha256-Y5SGPCn4PzTpD/oNHMN8ExXsX1+AGAbSQlO6u9vRhUg=";
             };
         };
 
@@ -649,7 +671,9 @@
         packages.nanopir5c-aarch64-uboot = nanopir5cAarch64Uboot;
         packages.nanopir5c-aarch64-image = nanopir5cAarch64Image;
 
-        packages.hifivep550-riscv64-uboot = hifiveP550Riscv64Uboot;
+        packages.hifive-p550-riscv64-uboot = hifiveP550Riscv64Uboot;
+
+        packages.milkv-jupiter-riscv64-uboot = milkvJupiterRiscv64Uboot;
 
         packages.tx2-uboot = tx2Uboot;
 
