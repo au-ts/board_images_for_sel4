@@ -3,6 +3,10 @@
 This repository aims to provide ready-to-go, reproducible, images
 that can be used for seL4 development.
 
+At Trustworthy Systems we have various boards that we experiment with
+for our work around seL4, this repository aims to make it easier to get up and
+running when we get new boards.
+
 All images are available for download from the
 [releases page](https://github.com/au-ts/board_images_for_sel4/releases/latest).
 
