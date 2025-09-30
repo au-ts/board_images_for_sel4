@@ -83,6 +83,43 @@
           ''
         ;
 
+        rpi5ConfigTxt = pkgs.writeTextFile {
+          name = "config.txt";
+          destination = "/config.txt";
+          text = ''
+            [all]
+            enable_uart=1
+            uart_2ndstage=1
+            arm_64bit=1
+            kernel=u-boot.bin
+          '';
+        };
+
+        rpi5Aarch64Image = pkgs.runCommand "image-aarch64-rpi5" { nativeBuildInputs = with pkgs; [ mtools dosfstools util-linux ]; }
+          ''
+            mkdir -p $out/firmware
+
+            dd if=/dev/zero of=$out/boot_part.img bs=1M count=64
+            mkfs.vfat $out/boot_part.img
+
+            cp ${rpi5Aarch64Uboot}/u-boot.bin $out
+            cp ${rpiFirmware}/boot/start4.elf $out/firmware
+            cp ${rpiFirmware}/boot/fixup4.dat $out/firmware
+            cp ${rpiFirmware}/boot/bcm2712-rpi-5-b.dtb $out/firmware
+            cp -r ${rpiFirmware}/boot/overlays $out/firmware/overlays
+
+            mcopy -i $out/boot_part.img -s $out/firmware/* ${rpi5Aarch64Uboot}/u-boot.bin ${rpi5ConfigTxt}/config.txt ::
+
+            dd if=/dev/zero of=$out/sd.img bs=1M count=128
+            sfdisk --no-reread --no-tell-kernel $out/sd.img <<EOF
+              label: dos
+
+              start=2048,size=64M,type=b
+            EOF
+            dd if=$out/boot_part.img of=$out/sd.img conv=notrunc seek=2048
+          ''
+        ;
+
         maaxboardAarch64Image = pkgs.runCommand "maaxboard-aarch64-image" { nativeBuildInputs = with pkgs; [ dosfstools util-linux ]; }
           ''
             mkdir -p $out
@@ -316,6 +353,29 @@
             "u-boot.bin"
           ];
           src = mainlineUboot;
+        };
+
+        rpi5Aarch64Uboot = pkgs.pkgsCross.aarch64-multiplatform.buildUBoot rec {
+          extraMeta.platforms = [ "aarch64-linux" ];
+          version = "v2024.07";
+          # There is no Raspberry Pi 5 specific config so we use the generic
+          # 64-bit one.
+          defconfig = "rpi_arm64_defconfig";
+          filesToInstall = [
+            ".config"
+            "u-boot.bin"
+          ];
+          dontPatch = true;
+          extraConfig = ''
+            CONFIG_BCM2712=y
+            CONFIG_CMD_BOOTDEV=y
+          '';
+          src = pkgs.fetchFromGitHub {
+            owner = "au-ts";
+            repo = "u-boot";
+            rev = "v2024.07-rpi5";
+            hash = "sha256-lQWE+KDkbmvhVa5UQ8rd0kgGsynU4NlMR9n+IVBuC/A=";
+          };
         };
 
         ubootAarch64Odroidc4 = pkgs.pkgsCross.aarch64-multiplatform.buildUBoot rec {
@@ -641,6 +701,7 @@
             cp ${maaxboardAarch64Image}/sd.img $out/maaxboard-aarch64.img
             cp ${odroidc4Aarch64Image}/sd.img $out/odroidc4-aarch64.img
             cp ${rpi4Aarch64Image}/sd.img $out/rpi4-aarch64.img
+            cp ${rpi5Aarch64Image}/sd.img $out/rpi5-aarch64.img
             cp ${rockpro64Aarch64Image}/sd.img $out/rockpro64-aarch64.img
             cp ${nanopir5cAarch64Image}/sd.img $out/nanopir5c-aarch64.img
             cp ${cheshireRiscv64Image}/sd.img $out/cheshire-riscv64.img
@@ -664,6 +725,9 @@
 
         packages.rpi4-aarch64-uboot = rpi4Aarch64Uboot;
         packages.rpi4-aarch64-image = rpi4Aarch64Image;
+
+        packages.rpi5-aarch64-uboot = rpi5Aarch64Uboot;
+        packages.rpi5-aarch64-image = rpi5Aarch64Image;
 
         packages.rockpro64-aarch64-uboot = rockpro64Aarch64Uboot;
         packages.rockpro64-aarch64-image = rockpro64Aarch64Image;
