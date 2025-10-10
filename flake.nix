@@ -209,6 +209,10 @@
             echo "TF_CFLAGS_aarch64 += --param=min-pagesize=0" >> Makefile
           '';
 
+          patches = [
+            ./patches/imx-atf_enable_debug_console.patch
+          ];
+
           installPhase = ''
             mkdir -p $out
             cp build/imx8mq/release/bl31.bin $out

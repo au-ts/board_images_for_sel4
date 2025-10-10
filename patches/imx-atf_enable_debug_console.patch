@@ -1,0 +1,50 @@
+diff --git a/plat/imx/imx8dxl/include/platform_def.h b/plat/imx/imx8dxl/include/platform_def.h
+index e2ffca8cf..a9a0732c2 100644
+--- a/plat/imx/imx8dxl/include/platform_def.h
++++ b/plat/imx/imx8dxl/include/platform_def.h
+@@ -76,7 +76,7 @@
+ /* enable it to make debug message to SC console */
+ #define SC_CONSOLE			0
+ 
+-#define DEBUG_CONSOLE			0
++#define DEBUG_CONSOLE			1
+ 
+ #ifdef SPD_trusty
+ #define DEBUG_CONSOLE_A35		1
+diff --git a/plat/imx/imx8m/imx8mq/include/platform_def.h b/plat/imx/imx8m/imx8mq/include/platform_def.h
+index 6d838fc3c..033cf56b0 100644
+--- a/plat/imx/imx8m/imx8mq/include/platform_def.h
++++ b/plat/imx/imx8m/imx8mq/include/platform_def.h
+@@ -150,5 +150,5 @@
+ #define CNTFID1_OFF			U(0x24)
+ #define COUNTER_FREQUENCY		8000000 /* 8MHz */
+ 
+-#define DEBUG_CONSOLE			0
++#define DEBUG_CONSOLE			1
+ #define IMX_WDOG_B_RESET
+diff --git a/plat/imx/imx8qm/include/platform_def.h b/plat/imx/imx8qm/include/platform_def.h
+index e70ff06bb..211c7295e 100644
+--- a/plat/imx/imx8qm/include/platform_def.h
++++ b/plat/imx/imx8qm/include/platform_def.h
+@@ -83,7 +83,7 @@
+ /* enable it to make debug message to SC console */
+ #define SC_CONSOLE			0
+ 
+-#define DEBUG_CONSOLE			0
++#define DEBUG_CONSOLE			1
+ #ifdef SPD_trusty
+ #define DEBUG_CONSOLE_A53		1
+ #else
+diff --git a/plat/imx/imx8qx/include/platform_def.h b/plat/imx/imx8qx/include/platform_def.h
+index debcdafb1..861a5fcdc 100644
+--- a/plat/imx/imx8qx/include/platform_def.h
++++ b/plat/imx/imx8qx/include/platform_def.h
+@@ -76,7 +76,7 @@
+ /* enable it to make debug message to SC console */
+ #define SC_CONSOLE			0
+ 
+-#define DEBUG_CONSOLE			0
++#define DEBUG_CONSOLE			1
+ 
+ #ifdef SPD_trusty
+ #define DEBUG_CONSOLE_A35		1
