@@ -525,6 +525,11 @@
             "FW_JUMP_ADDR=0x90000000"
             "FW_PAYLOAD=y"
           ];
+
+          patches = [
+            # creates a timing channel
+            ./patches/cheshire_no_vga.patch
+          ];
         })).override {
           withPlatform = "fpga/cheshire";
           withPayload = "${cheshireRiscv64Uboot}/u-boot.bin";
