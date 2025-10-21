@@ -33,6 +33,7 @@
         buildOpensbi = pkgs.pkgsCross.riscv64.opensbi;
 
         armTrustedFirmwareRK3399 = pkgs.pkgsCross.aarch64-multiplatform.armTrustedFirmwareRK3399;
+        armTrustedFirmwareRK3568 = pkgs.pkgsCross.aarch64-multiplatform.armTrustedFirmwareRK3568;
 
         cheshire = pkgs.callPackage ./board/cheshire.nix {
           inherit buildOpensbi;
@@ -54,6 +55,12 @@
         };
 
         odroidc4 = pkgs.callPackage ./board/odroidc4.nix {
+          buildUBoot = aarch64BuildUBoot;
+          ubootSrc = mainlineUboot;
+        };
+
+        rock3b = pkgs.callPackage ./board/rock3b.nix {
+          inherit armTrustedFirmwareRK3568;
           buildUBoot = aarch64BuildUBoot;
           ubootSrc = mainlineUboot;
         };
@@ -91,8 +98,9 @@
             cp ${cheshire.image}/sd.img $out/cheshire-riscv64.img
             cp ${maaxboard.image}/sd.img $out/maaxboard-aarch64.img
             cp ${odroidc4.image}/sd.img $out/odroidc4-aarch64.img
-            cp ${rpi4.image}/sd.img $out/rpi4-aarch64.img
             cp ${rockpro64.image}/sd.img $out/rockpro64-aarch64.img
+            cp ${rock3b.image}/sd.img $out/rock3b-aarch64.img
+            cp ${rpi4.image}/sd.img $out/rpi4-aarch64.img
             cp ${rpi5.image}/sd.img $out/rpi5-aarch64.img
             cp ${star64.image}/sd.img $out/star64-riscv64.img
 
@@ -110,14 +118,17 @@
         packages.odroidc4-aarch64-uboot = odroidc4.uboot;
         packages.odroidc4-aarch64-image = odroidc4.image;
 
+        packages.rockpro64-aarch64-uboot = rockpro64.uboot;
+        packages.rockpro64-aarch64-image = rockpro64.image;
+
+        packages.rock3b-aarch64-uboot = rockpro64.uboot;
+        packages.rock3b-aarch64-image = rockpro64.image;
+
         packages.rpi4-aarch64-uboot = rpi4.uboot;
         packages.rpi4-aarch64-image = rpi4.image;
 
         packages.rpi5-aarch64-uboot = rpi5.uboot;
         packages.rpi5-aarch64-image = rpi5.image;
-
-        packages.rockpro64-aarch64-uboot = rockpro64.uboot;
-        packages.rockpro64-aarch64-image = rockpro64.image;
 
         packages.star64-riscv64-uboot = star64.uboot;
         packages.star64-riscv64-image = star64.image;
