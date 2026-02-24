@@ -83,7 +83,9 @@
         star64 = pkgs.callPackage ./board/star64.nix {
           inherit buildOpensbi;
           buildUBoot = riscv64BuildUBoot;
-          ubootSrc = mainlineUboot;
+          # The U-Boot docs describe Star64 support as the exact same configuration
+          # as VisionFive2, so we can just use the exiting Nix package for it.
+          ubootVisionFive2 = pkgs.pkgsCross.riscv64.ubootVisionFive2;
         };
 
         tx2 = pkgs.callPackage ./board/tx2.nix {
