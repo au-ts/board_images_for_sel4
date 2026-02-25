@@ -19,10 +19,6 @@ rec {
         "u-boot.bin"
       ];
 
-      # Nix buildUBoot tries to apply Rasbperry Pi specific patches to the source
-      # which doesn't work for certain forks.
-      dontPatch = true;
-
       src = fetchFromGitHub {
         owner = "Ivan-Velickovic";
         repo = "uboot_spacemit_k1";

@@ -29,9 +29,6 @@ rec {
       "tools/mkimage"
       "u-boot-nodtb.bin"
     ];
-    # Nix buildUBoot tries to apply Rasbperry Pi specific patches to the source
-    # which doesn't work for certain forks.
-    dontPatch = true;
     src = fetchFromGitHub {
       owner = "Avnet";
       repo = "uboot-imx";

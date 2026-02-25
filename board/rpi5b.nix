@@ -40,7 +40,6 @@ rec {
       ".config"
       "u-boot.bin"
     ];
-    dontPatch = true;
     extraConfig = ''
       CONFIG_BCM2712=y
       CONFIG_CMD_BOOTDEV=y
