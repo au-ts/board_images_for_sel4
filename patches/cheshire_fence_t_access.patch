@@ -1,0 +1,56 @@
+From 9940d8fbc292e9e58730888247e633fed6c3c7a1 Mon Sep 17 00:00:00 2001
+From: Varun Sethu <varun.sethu@outlook.com>
+Date: Fri, 29 Aug 2025 10:13:47 +1000
+Subject: [PATCH] fence_t csr
+
+---
+ include/sbi/riscv_encoding.h |  4 ++++
+ include/sbi/sbi_types.h      |  1 -
+ lib/sbi/sbi_emulate_csr.c    | 12 ++++++++++++
+ 3 files changed, 16 insertions(+), 1 deletion(-)
+
+diff --git a/include/sbi/riscv_encoding.h b/include/sbi/riscv_encoding.h
+index e1d0b463c66..70a2d1bc334 100644
+--- a/include/sbi/riscv_encoding.h
++++ b/include/sbi/riscv_encoding.h
+@@ -256,6 +256,10 @@
+ #define CSR_HPMCOUNTER30H		0xc9e
+ #define CSR_HPMCOUNTER31H		0xc9f
+ 
++/** temp */
++#define CSR_FENCE_T_PAD			0x7C3
++#define CSR_FENCE_T_CEIL        0x7C5
++
+ /* ===== Supervisor-level CSRs ===== */
+ 
+ /* Supervisor Trap Setup */
+diff --git a/lib/sbi/sbi_emulate_csr.c b/lib/sbi/sbi_emulate_csr.c
+index dbb17552fa5..a6b3431a924 100644
+--- a/lib/sbi/sbi_emulate_csr.c
++++ b/lib/sbi/sbi_emulate_csr.c
+@@ -83,6 +83,14 @@ int sbi_emulate_csr_read(int csr_num, struct sbi_trap_regs *regs,
+ 		*csr_val = csr_read(CSR_MINSTRET);
+ 		break;
+ 
++	case CSR_FENCE_T_PAD:
++		*csr_val = csr_read(CSR_FENCE_T_PAD);
++		break;
++
++	case CSR_FENCE_T_CEIL:
++		*csr_val = csr_read(CSR_FENCE_T_CEIL);
++		break;
++
+ #if __riscv_xlen == 32
+ 	case CSR_HTIMEDELTAH:
+ 		if (prev_mode == PRV_S && !virt)
+@@ -176,6 +184,10 @@ int sbi_emulate_csr_write(int csr_num, struct sbi_trap_regs *regs,
+ 		else
+ 			ret = SBI_ENOTSUPP;
+ 		break;
++	case CSR_FENCE_T_PAD:
++		csr_write(CSR_FENCE_T_PAD, csr_val);
++		break;
++
+ #if __riscv_xlen == 32
+ 	case CSR_HTIMEDELTAH:
+ 		if (prev_mode == PRV_S && !virt)

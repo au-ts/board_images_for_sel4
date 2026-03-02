@@ -47,6 +47,7 @@ rec {
     patches = [
       # creates a timing channel
       ../patches/cheshire_no_vga.patch
+      ../patches/cheshire_fence_t_access.patch
     ];
   })).override {
     withPlatform = "fpga/cheshire";
@@ -158,7 +159,7 @@ rec {
     '';
   };
 
-  uboot = (buildUBoot {
+  uboot = buildUBoot {
       version = "pulp-platform-2025-06-21";
 
       src = fetchFromGitHub {
@@ -191,10 +192,6 @@ rec {
         "u-boot"
         "u-boot.bin"
       ];
-  }).overrideAttrs {
-    # remove the raspberry pi patch present in nixos-25.05, which has been removed for unstable nixpkgs
-    # at the time of writing.
-    patches = [];
   };
 
   # taken from pulp-platform/cheshire sw/sw.mk
