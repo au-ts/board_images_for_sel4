@@ -29,6 +29,12 @@ Once you download the image for your board, you need to flash it to your storage
 You can do this with [the balenaEtcher application](https://etcher.balena.io/) or the `dd` utility
 on the command line.
 
+For example:
+```sh
+tar xf <image>.tar.gz
+sudo dd if=<image> of=/dev/<device> status=progress bs=1M conv=sync
+```
+
 ## Building from source
 
 To build from source you must be using Linux and have [Nix](https://nixos.org/download/)
