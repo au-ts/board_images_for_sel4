@@ -17,6 +17,7 @@
   dtc,
   python3,
   gptfdisk,
+  dosfstools,
 }:
 let
 in
@@ -176,7 +177,7 @@ rec {
       extraConfig = ''
         CONFIG_AUTOBOOT=y
         CONFIG_BOOTDELAY=0
-        CONFIG_BOOTCOMMAND="setenv bootcmd_gdb 'bootm 0x90000000 - ''${fdtcontroladdr}'; echo 'First load the uImage as a binary to 0x90000000, then run bootcmd_gdb;'"
+        CONFIG_BOOTCOMMAND="fatload mmc 0:4 0x90000000 loader.uImage && bootm 0x90000000 - ''${fdtcontroladdr}"
       '';
 
       # CONFIG_DEBUG_UART=y
@@ -203,7 +204,7 @@ rec {
       CHS_SW_DTB_TGUID = "BA442F61-2AEF-42DE-9233-E4D75D3ACB9D";
       CHS_SW_FW_TGUID = "99EC86DA-3F5B-4B0D-8F4B-C4BACFA5F859";
     };
-  in runCommand "cheshire-riscv64-image" { nativeBuildInputs = [ gptfdisk ]; } ''
+  in runCommand "cheshire-riscv64-image" { nativeBuildInputs = [ gptfdisk dosfstools ]; } ''
       mkdir -p $out
 
       # We could do something smarter where we precompute the size of fw_payload.bin
@@ -215,16 +216,16 @@ rec {
               --new=1:64:96 --typecode=1:${vars.CHS_SW_ZSL_TGUID} \
               --new=2:128:159 --typecode=2:${vars.CHS_SW_DTB_TGUID} \
               --new=3:2048:8191 --typecode=3:${vars.CHS_SW_FW_TGUID} \
-              --new=4:8192:24575 --typecode=4:8300 \
-              --new=5:24576:0 --typecode=5:8200 \
+              --new=4:8192:+10M --typecode=4:8300 \
               $out/sd.img
 
       dd if=${sw}/zsl.rom.bin of=$out/sd.img bs=512 seek=64 conv=notrunc
       dd if=${sw}/cheshire.genesys2.dtb of=$out/sd.img bs=512 seek=128 conv=notrunc
       dd if=${opensbi}/share/opensbi/lp64/fpga/cheshire/firmware/fw_payload.bin of=$out/sd.img bs=512 seek=2048 conv=notrunc
 
-      # linux not supported; partitions 4 and 5 are unused.
-      # dd if=uImage of=$out/sd.img bs=512 seek=8192 conv=notrunc
+      dd if=/dev/zero of=fat32_part.img bs=1M count=10
+      mkfs.vfat -F 32 fat32_part.img
+      dd if=fat32_part.img of=$out/sd.img bs=512 seek=8192 conv=notrunc
     ''
       ;
 }
